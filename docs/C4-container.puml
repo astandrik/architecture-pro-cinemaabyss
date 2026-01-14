@@ -1,0 +1,60 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+LAYOUT_WITH_LEGEND()
+
+title Кинобездна — To-Be архитектура (C4 Container)
+
+' ===== Клиенты =====
+Person(web, "Веб-клиент", "Браузер")
+Person(mobile, "Мобильный клиент", "iOS / Android")
+Person(tv, "Smart TV клиент", "TV приложение")
+
+' ===== Граница системы =====
+System_Boundary(cinema, "Онлайн-кинотеатр «Кинобездна»") {
+
+  Container(proxy, "API Gateway / Proxy", "Service", "Единая точка входа. Реализация Strangler Fig — маршрутизация запросов в монолит или новые сервисы.")
+
+  Container(monolith, "Монолит (легаси)", "Go", "Существующий REST API. Постепенно вытесняется через Proxy.")
+
+  ContainerDb(monolithDb, "База данных монолита", "PostgreSQL", "Единая БД легаси-системы.")
+
+  Container(movies, "Сервис фильмов (movies)", "Service", "Метаданные фильмов: жанры, актёры, рейтинги. Уже выделенный микросервис.")
+
+  Container(usersSvc, "Users / Auth", "Service", "Регистрация и аутентификация пользователей.")
+
+  Container(paymentsSvc, "Payments", "Service", "Обработка платежей. Синхронный ответ пользователю об успехе или ошибке.")
+
+  Container(subsSvc, "Subscriptions", "Service", "Управление подписками и доступом к контенту.")
+
+  Container(notifySvc, "Notifications", "Service", "Уведомления и чеки.")
+
+  ContainerQueue(kafka, "Kafka", "Message Broker", "Журнал событий, обеспечивающий слабую связность доменов.")
+}
+
+System_Ext(recsys, "Рекомендательная система", "Внешняя система", "Сторонний сервис рекомендаций.")
+
+' ===== Синхронный пользовательский путь =====
+Rel(web, proxy, "HTTPS", "REST")
+Rel(mobile, proxy, "HTTPS", "REST")
+Rel(tv, proxy, "HTTPS", "REST")
+
+Rel(proxy, monolith, "HTTP", "REST (Strangler Fig → легаси)")
+Rel(proxy, movies, "HTTP", "REST")
+Rel(proxy, usersSvc, "HTTP", "REST")
+Rel(proxy, paymentsSvc, "HTTP", "REST (оплата — нужен мгновенный результат)")
+Rel(proxy, subsSvc, "HTTP", "REST")
+
+Rel(monolith, monolithDb, "SQL", "чтение / запись")
+
+' ===== Асинхронная интеграция доменов через Kafka =====
+Rel(usersSvc, kafka, "Публикация события", "UserRegistered")
+Rel(paymentsSvc, kafka, "Публикация события", "PaymentCompleted / PaymentFailed")
+
+Rel(kafka, subsSvc, "Потребление события", "Активация или отмена подписки по факту оплаты")
+
+Rel(kafka, notifySvc, "Потребление события", "Уведомления и отправка чеков")
+
+' ===== Внешние рекомендации =====
+Rel(recsys, proxy, "HTTPS", "REST API рекомендаций")
+
+@enduml
