@@ -139,50 +139,69 @@ jobs:
 
       - name: Start services with Docker Compose
         run: |
-          docker compose up -d --build
+          docker compose up -d postgres zookeeper kafka
+          docker compose up -d --build monolith movies-service events-service proxy-service kafka-ui
+
+      - name: Wait for Postgres to be healthy
+        run: |
+          set -e
+          deadline=$((SECONDS+180))
+          until [ "$(docker inspect -f '{{.State.Health.Status}}' cinemaabyss-postgres)" = "healthy" ]; do
+            if [ $SECONDS -ge $deadline ]; then
+              echo "Postgres not healthy in time"
+              docker compose ps
+              docker compose logs --tail=200 postgres
+              exit 1
+            fi
+            sleep 3
+          done
 
       - name: Wait for services to be ready
         run: |
           set -e
+          curl_in_network() {
+            docker run --rm --network=cinemaabyss-network curlimages/curl:8.5.0 -fsS "$1" >/dev/null
+          }
+
           deadline=$((SECONDS+180))
-          until curl -fsS http://localhost:8080/health >/dev/null; do
+          until curl_in_network http://monolith:8080/health; do
             if [ $SECONDS -ge $deadline ]; then
               echo "Monolith not ready in time"
               docker compose ps
-              docker compose logs --tail=200
+              docker compose logs --tail=200 monolith
               exit 1
             fi
             sleep 3
           done
 
           deadline=$((SECONDS+180))
-          until curl -fsS http://localhost:8081/api/movies/health >/dev/null; do
+          until curl_in_network http://movies-service:8081/api/movies/health; do
             if [ $SECONDS -ge $deadline ]; then
               echo "Movies service not ready in time"
               docker compose ps
-              docker compose logs --tail=200
+              docker compose logs --tail=200 movies-service
               exit 1
             fi
             sleep 3
           done
 
           deadline=$((SECONDS+180))
-          until curl -fsS http://localhost:8082/api/events/health >/dev/null; do
+          until curl_in_network http://events-service:8082/api/events/health; do
             if [ $SECONDS -ge $deadline ]; then
               echo "Events service not ready in time"
               docker compose ps
-              docker compose logs --tail=200
+              docker compose logs --tail=200 events-service
               exit 1
             fi
             sleep 3
           done
 
           deadline=$((SECONDS+180))
-          until curl -fsS http://localhost:8000/health >/dev/null; do
+          until curl_in_network http://proxy-service:8000/health; do
             if [ $SECONDS -ge $deadline ]; then
               echo "Proxy service not ready in time"
               docker compose ps
-              docker compose logs --tail=200
+              docker compose logs --tail=200 proxy-service
               exit 1
             fi
             sleep 3
