@@ -60,6 +60,10 @@ proxy-service:
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090
+<img width="563" height="419" alt="Screenshot 2026-01-15 at 20 05 44" src="https://github.com/user-attachments/assets/9cd66381-8a54-4c7e-bb43-bbb8ea528230" />
+<img width="1236" height="536" alt="Screenshot 2026-01-15 at 20 06 50" src="https://github.com/user-attachments/assets/580cb18e-1b2a-4a9b-a14f-c321dd8b0307" />
+<img width="1440" height="519" alt="Screenshot 2026-01-15 at 20 07 10" src="https://github.com/user-attachments/assets/ed108acb-c318-42c9-b9b1-8272c7364739" />
+<img width="1440" height="644" alt="Screenshot 2026-01-15 at 20 07 37" src="https://github.com/user-attachments/assets/cc1fec45-fa12-4949-b838-88259adfef01" />
 
 ## Задание 3
 
