@@ -395,6 +395,11 @@ minikube tunnel
 Потом вызовите
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+<img width="1438" height="326" alt="image" src="https://github.com/user-attachments/assets/3f20a4a2-b83e-439b-a8b3-1120b73cf061" />
+<img width="1030" height="77" alt="image" src="https://github.com/user-attachments/assets/5bf75924-aa31-4c74-939b-6fb1175e58b8" />
+<img width="863" height="694" alt="image" src="https://github.com/user-attachments/assets/e6e0ec28-6789-414d-a4b6-67ef75339866" />
+<img width="734" height="170" alt="image" src="https://github.com/user-attachments/assets/cb72e78a-bb2e-4ddd-a734-0cb08565ca4c" />
+
 
 # Задание 5
 
