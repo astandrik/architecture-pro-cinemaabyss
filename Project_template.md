@@ -307,9 +307,14 @@ minikube tunnel
 Часть тестов с health-чек упадет, но создание событий отработает.
 Откройте логи event-service и сделайте скриншот обработки событий
 
+<img width="305" height="687" alt="image" src="https://github.com/user-attachments/assets/9259ee6b-14aa-43e9-9cca-a03558866e29" />
+
+
 #### Шаг 3
 
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и скриншот вывода event-service после вызова тестов.
+<img width="1440" height="322" alt="image" src="https://github.com/user-attachments/assets/ba2ec91e-60d2-4736-b870-05647110d89f" />
+<img width="305" height="687" alt="image" src="https://github.com/user-attachments/assets/9259ee6b-14aa-43e9-9cca-a03558866e29" />
 
 ## Задание 4
 
