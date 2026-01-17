@@ -20,6 +20,8 @@ System_Boundary(cinema, "Онлайн-кинотеатр «Кинобездна�
 
   Container(movies, "Сервис фильмов (movies)", "Service", "Метаданные фильмов: жанры, актёры, рейтинги. Уже выделенный микросервис.")
 
+  Container(eventsSvc, "Сервис событий (events-service)", "Node.js", "HTTP API для событий; продюсер/консьюмер Kafka. Используется тестами для создания и обработки событий.")
+
   Container(usersSvc, "Users / Auth", "Service", "Регистрация и аутентификация пользователей.")
 
   Container(paymentsSvc, "Payments", "Service", "Обработка платежей. Синхронный ответ пользователю об успехе или ошибке.")
@@ -40,6 +42,7 @@ Rel(tv, proxy, "HTTPS", "REST")
 
 Rel(proxy, monolith, "HTTP", "REST (Strangler Fig → легаси)")
 Rel(proxy, movies, "HTTP", "REST")
+Rel(proxy, eventsSvc, "HTTP", "REST (/api/events → events-service)")
 Rel(proxy, usersSvc, "HTTP", "REST")
 Rel(proxy, paymentsSvc, "HTTP", "REST (оплата — нужен мгновенный результат)")
 Rel(proxy, subsSvc, "HTTP", "REST")
@@ -49,6 +52,8 @@ Rel(monolith, monolithDb, "SQL", "чтение / запись")
 ' ===== Асинхронная интеграция доменов через Kafka =====
 Rel(usersSvc, kafka, "Публикация события", "UserRegistered")
 Rel(paymentsSvc, kafka, "Публикация события", "PaymentCompleted / PaymentFailed")
+Rel(eventsSvc, kafka, "Публикация события", "movie-events / user-events / payment-events")
+Rel(kafka, eventsSvc, "Потребление события", "consumer group: events-service")
 
 Rel(kafka, subsSvc, "Потребление события", "Активация или отмена подписки по факту оплаты")
 
